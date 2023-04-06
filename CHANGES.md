@@ -1,4 +1,7 @@
 # Changelog
+
+## 1.2.
+Bump `PyJWT` version
 ## 1.1.
 Bump `django-graphql-jwt` version
 ## v0.3
