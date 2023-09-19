@@ -43,9 +43,11 @@ class UserStatus(models.Model):
         html_message = render_to_string(template, context)
         message = strip_tags(html_message)
 
+        email_from = getattr(self, 'from_email', app_settings.EMAIL_FROM)
+
         return send_mail(
             subject=_subject,
-            from_email=app_settings.EMAIL_FROM,
+            from_email=email_from,
             message=message,
             html_message=html_message,
             recipient_list=(
