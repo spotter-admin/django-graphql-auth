@@ -68,14 +68,15 @@ class UserStatus(models.Model):
             "path": path,
             "timestamp": time.time(),
             **app_settings.EMAIL_TEMPLATE_VARIABLES,
+            **kwargs
         }
 
     def send_activation_email(self, info, *args, **kwargs):
         email_context = self.get_email_context(
             info, app_settings.ACTIVATION_PATH_ON_EMAIL, TokenAction.ACTIVATION
         )
-        template = app_settings.EMAIL_TEMPLATE_ACTIVATION
-        subject = app_settings.EMAIL_SUBJECT_ACTIVATION
+        template = kwargs.get('template', app_settings.EMAIL_TEMPLATE_ACTIVATION)
+        subject = kwargs.get('subject', app_settings.EMAIL_SUBJECT_ACTIVATION)
         return self.send(subject, template, email_context, *args, **kwargs)
 
     def resend_activation_email(self, info, *args, **kwargs):
@@ -84,27 +85,27 @@ class UserStatus(models.Model):
         email_context = self.get_email_context(
             info, app_settings.ACTIVATION_PATH_ON_EMAIL, TokenAction.ACTIVATION
         )
-        template = app_settings.EMAIL_TEMPLATE_ACTIVATION_RESEND
-        subject = app_settings.EMAIL_SUBJECT_ACTIVATION_RESEND
+        template =  kwargs.get('template', app_settings.EMAIL_TEMPLATE_ACTIVATION_RESEND)
+        subject = kwargs.get('subject', app_settings.EMAIL_SUBJECT_ACTIVATION_RESEND)
         return self.send(subject, template, email_context, *args, **kwargs)
 
     def send_password_set_email(self, info, *args, **kwargs):
         email_context = self.get_email_context(
             info, app_settings.PASSWORD_SET_PATH_ON_EMAIL, TokenAction.PASSWORD_SET
         )
-        template = app_settings.EMAIL_TEMPLATE_PASSWORD_SET
-        subject = app_settings.EMAIL_SUBJECT_PASSWORD_SET
+        template =  kwargs.get('template', app_settings.EMAIL_TEMPLATE_PASSWORD_SET)
+        subject = kwargs.get('subject', app_settings.EMAIL_SUBJECT_PASSWORD_SET)
         return self.send(subject, template, email_context, *args, **kwargs)
 
     def send_password_reset_email(self, info, *args, **kwargs):
         email_context = self.get_email_context(
             info, app_settings.PASSWORD_RESET_PATH_ON_EMAIL, TokenAction.PASSWORD_RESET
         )
-        template = app_settings.EMAIL_TEMPLATE_PASSWORD_RESET
-        subject = app_settings.EMAIL_SUBJECT_PASSWORD_RESET
+        template =  kwargs.get('template', app_settings.EMAIL_TEMPLATE_PASSWORD_RESET)
+        subject = kwargs.get('subject', app_settings.EMAIL_SUBJECT_PASSWORD_RESET)
         return self.send(subject, template, email_context, *args, **kwargs)
 
-    def send_secondary_email_activation(self, info, email):
+    def send_secondary_email_activation(self, info, email, **kwargs):
         if not self.email_is_free(email):
             raise EmailAlreadyInUse
         email_context = self.get_email_context(
@@ -113,8 +114,8 @@ class UserStatus(models.Model):
             TokenAction.ACTIVATION_SECONDARY_EMAIL,
             secondary_email=email,
         )
-        template = app_settings.EMAIL_TEMPLATE_SECONDARY_EMAIL_ACTIVATION
-        subject = app_settings.EMAIL_SUBJECT_SECONDARY_EMAIL_ACTIVATION
+        template =  kwargs.get('template', app_settings.EMAIL_TEMPLATE_SECONDARY_EMAIL_ACTIVATION)
+        subject = kwargs.get('subject', app_settings.EMAIL_SUBJECT_SECONDARY_EMAIL_ACTIVATION)
         return self.send(subject, template, email_context, recipient_list=[email])
 
     @classmethod
